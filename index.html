@@ -1,28 +1,353 @@
-<div ng-app="myapp">
-    <div ng-controller="MapController">
+<html><head><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\:form{display:block;}.ng-animate-start{clip:rect(0,auto,auto,0);-ms-zoom:1.0001;}.ng-animate-active{clip:rect(-1px,auto,auto,0);-ms-zoom:1;}</style>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Geometry viewer</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.1/angular.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+
+      <link rel="stylesheet" type="text/css" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css">
+      <script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+      <script type="text/javascript" src="http://tombatossals.github.io/angular-leaflet-directive/dist/angular-leaflet-directive.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+      <script type="text/javascript" src="http://cdn-geoweb.s3.amazonaws.com/terraformer/1.0.4/terraformer.min.js"></script>
+      <script type="text/javascript" src="http://cdn-geoweb.s3.amazonaws.com/terraformer-wkt-parser/1.0.0/terraformer-wkt-parser.min.js"></script>
+
+  <style id="compiled-css" type="text/css">
+    html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+.map-container {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 300px;
+    top: 0;
+}
+.form-container {
+    height: 200px;
+    padding: 5px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 300px;
+}
+.feature-container {
+    bottom: 0;
+    padding: 5px;
+    position: absolute;
+    right: 0;
+    top: 220px;
+    width: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.angular-leaflet-map {
+    height: 100%;
+}
+form textarea {
+    width: 100%;
+}
+ul > li {
+    padding-bottom: 5px;
+    white-space: nowrap;
+}
+
+    /* EOS */
+  </style>
+
+  <script id="insert"></script>
+
+    <script src="/js/stringify.js?6145cc54326f55ae83af3714188246fc647334e2" charset="utf-8"></script>
+    <script>
+      const customConsole = (w) => {
+        const pushToConsole = (payload, type) => {
+          w.parent.postMessage({
+            console: {
+              payload: stringify(payload),
+              type:    type
+            }
+          }, "*")
+        }
+
+        w.onerror = (message, url, line, column) => {
+          // the line needs to correspond with the editor panel
+          // unfortunately this number needs to be altered every time this view is changed
+          line = line - 70
+          if (line < 0){
+            pushToConsole(message, "error")
+          } else {
+            pushToConsole(`[${line}:${column}] ${message}`, "error")
+          }
+        }
+
+        let console = (function(systemConsole){
+          return {
+            log: function(){
+              let args = Array.from(arguments)
+              pushToConsole(args, "log")
+              systemConsole.log.apply(this, args)
+            },
+            info: function(){
+              let args = Array.from(arguments)
+              pushToConsole(args, "info")
+              systemConsole.info.apply(this, args)
+            },
+            warn: function(){
+              let args = Array.from(arguments)
+              pushToConsole(args, "warn")
+              systemConsole.warn.apply(this, args)
+            },
+            error: function(){
+              let args = Array.from(arguments)
+              pushToConsole(args, "error")
+              systemConsole.error.apply(this, args)
+            },
+            system: function(arg){
+              pushToConsole(arg, "system")
+            },
+            clear: function(){
+              systemConsole.clear.apply(this, {})
+            },
+            time: function(){
+              let args = Array.from(arguments)
+              systemConsole.time.apply(this, args)
+            },
+            assert: function(assertion, label){
+              if (!assertion){
+                pushToConsole(label, "log")
+              }
+
+              let args = Array.from(arguments)
+              systemConsole.assert.apply(this, args)
+            }
+          }
+        }(window.console))
+
+        window.console = { ...window.console, ...console }
+
+        console.system("Running fiddle")
+      }
+
+      if (window.parent){
+        customConsole(window)
+      }
+    </script>
+</head>
+<body>
+    <div ng-app="myapp" class="ng-scope">
+    <div ng-controller="MapController" class="ng-scope">
         <div class="map-container">
-            <leaflet id="map" defaults="map.defaults" geojson="features.geojson" center="map.center"></leaflet>
+            <div class="angular-leaflet-map ng-isolate-scope leaflet-container leaflet-retina leaflet-fade-anim" id="map" defaults="map.defaults" geojson="features.geojson" center="map.center" tabindex="0" style="position: relative;"><div ng-transclude=""></div><div class="leaflet-map-pane" style="transform: translate3d(-228px, 0px, 0px);"><div class="leaflet-tile-pane"><div class="leaflet-layer"><div class="leaflet-tile-container"></div><div class="leaflet-tile-container leaflet-zoom-animated"><img class="leaflet-tile leaflet-tile-loaded" src="//c.tile.openstreetmap.org/2/1/1.png" style="height: 256px; width: 256px; left: -28px; top: -55px;"><img class="leaflet-tile leaflet-tile-loaded" src="//a.tile.openstreetmap.org/2/2/1.png" style="height: 256px; width: 256px; left: 228px; top: -55px;"><img class="leaflet-tile leaflet-tile-loaded" src="//a.tile.openstreetmap.org/2/1/2.png" style="height: 256px; width: 256px; left: -28px; top: 201px;"><img class="leaflet-tile leaflet-tile-loaded" src="//b.tile.openstreetmap.org/2/2/2.png" style="height: 256px; width: 256px; left: 228px; top: 201px;"></div></div></div><div class="leaflet-objects-pane"><div class="leaflet-shadow-pane"></div><div class="leaflet-overlay-pane"><svg class="leaflet-zoom-animated" width="0" height="466" viewBox="228 -32 0 466" style="transform: translate3d(228px, -32px, 0px);"><g><path stroke-linejoin="round" stroke-linecap="round" fill-rule="evenodd" stroke="black" stroke-opacity="1" stroke-width="2" fill="green" fill-opacity="0.7" class="leaflet-clickable" d="M0 0"></path></g></svg></div><div class="leaflet-marker-pane"></div><div class="leaflet-popup-pane"></div></div></div><div class="leaflet-control-container"><div class="leaflet-top leaflet-left"><div class="leaflet-control-zoom leaflet-bar leaflet-control"><a class="leaflet-control-zoom-in" href="#" title="Zoom in">+</a><a class="leaflet-control-zoom-out" href="#" title="Zoom out">-</a></div></div><div class="leaflet-top leaflet-right"></div><div class="leaflet-bottom leaflet-left"></div><div class="leaflet-bottom leaflet-right"><div class="leaflet-control-attribution leaflet-control"><a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> | © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors</div></div></div></div>
         </div>
         <div class="form-container">
-            <form>
-                <textarea rows="8" ng-model="form.text" placeholder="Enter WKT or GeoJSON ..."></textarea>
+            <form class="ng-pristine ng-valid">
+                <textarea rows="8" ng-model="form.text" placeholder="Enter WKT or GeoJSON ..." class="ng-pristine ng-valid"></textarea>
                 <button class="btn btn-danger" ng-click="form.text=''" ng-disabled="form.text.length===0">Clear</button>
-                <button ng-if="form.curId==null" class="btn btn-primary" ng-click="addFeature(form.text, form.autoZoom)" ng-disabled="form.text.length===0">Add</button>
-                <button ng-if="form.curId!=null" class="btn btn-primary" ng-click="updateFeature(form.text, form.autoZoom, form.curId)" ng-disabled="form.text.length===0">Update</button>
+                <!-- ngIf: form.curId==null --><button ng-if="form.curId==null" class="btn btn-primary ng-scope" ng-click="addFeature(form.text, form.autoZoom)" ng-disabled="form.text.length===0">Add</button><!-- end ngIf: form.curId==null -->
+                <!-- ngIf: form.curId!=null -->
                 <button class="btn btn-default" ng-click="zoomToFeatures()">Zoom to fit</button>
-                <input type="checkbox" ng-model="form.autoZoom">Auto fit</form>
+                <input type="checkbox" ng-model="form.autoZoom" class="ng-pristine ng-valid">Auto fit</form>
         </div>
         <div class="feature-container">
             <ul class="list-unstyled">
-                <li ng-repeat="f in features.original | orderBy:'id'" title={{f.text}}>
-                    <input type="checkbox" ng-model="f.visible" ng-change="updateLayers()" ng-disabled="form.curId!=null"> <span class="name">[{{f.id+1}}] {{f.name}}</span>
+                <!-- ngRepeat: f in features.original | orderBy:'id' --><li ng-repeat="f in features.original | orderBy:'id'" title="{ &quot;type&quot;: &quot;Polygon&quot;, &quot;coordinates&quot;: [[[30, 10], [40, 40], [20, 40], [10, 20], [30, 10]]]}" class="ng-scope">
+                    <input type="checkbox" ng-model="f.visible" ng-change="updateLayers()" ng-disabled="form.curId!=null" class="ng-pristine ng-valid"> <span class="name ng-binding">[1] Polygon</span>
 
                     <button class="btn btn-info btn-xs" ng-disabled="form.curId!=null || !f.visible" ng-click="editFeature(f)"><i class="glyphicon glyphicon-pencil"></i>
 
                     </button>
-                    <button class="btn btn-danger btn-xs" ng-disabled="form.curId!=null" ng-click="deleteFeature(f)">&times;</button>
-                </li>
+                    <button class="btn btn-danger btn-xs" ng-disabled="form.curId!=null" ng-click="deleteFeature(f)">×</button>
+                </li><!-- end ngRepeat: f in features.original | orderBy:'id' -->
             </ul>
         </div>
     </div>
 </div>
+
+    <script type="text/javascript">//<![CDATA[
+
+
+var app = angular.module('myapp', ['leaflet-directive']);
+
+app.controller('MapController', function ($scope, $timeout, $window, leafletBoundsHelpers, leafletData) {
+
+    $scope.map = {
+        defaults: {},
+        center: {
+            lat: 0,
+            lng: 0,
+            zoom: 2
+        }
+    };
+
+    $scope.form = {
+        counter: 0,
+        text: '',
+        autoZoom: true,
+        curId: null
+    };
+
+    $scope.features = {
+        original: [],
+        geojson: {
+            data: {
+                type: 'FeatureCollection',
+                features: []
+            },
+            options: {
+                style: {
+                    fillColor: 'green',
+                    weight: 2,
+                    opacity: 1,
+                    color: 'black',
+                    fillOpacity: 0.7
+                },
+                onEachFeature: function (f, l) {
+                    $scope.featureGroup.addLayer(l);
+                }
+            }
+        }
+    };
+
+    $scope.makeFeature = function (text) {
+        try {
+            if (text.indexOf('{') < 0) {
+                return Terraformer.WKT.parse(text);
+            }
+
+            var geoJson = JSON.parse(text);
+            Terraformer.WKT.convert(geoJson);
+            return geoJson;
+        } catch (Exception) {
+            return;
+        }
+    };
+
+    $scope.updateLayers = function () {
+        var visibleFeatures = $scope.features.original.filter(function (f) {
+            return f.visible;
+        });
+
+        $scope.featureGroup = L.featureGroup();
+        $scope.features.geojson.data.features = visibleFeatures.map(function (f) {
+            return $scope.makeFeature(f.text);
+        });
+    };
+
+    $scope.validate = function (text) {
+        var feature = $scope.makeFeature(text);
+        if (!feature) {
+            $window.alert('Invalid geometry, try again');
+            return;
+        }
+        return feature;
+    };
+
+    $scope.refreshMap = function (zoom) {
+        $scope.updateLayers();
+
+        if (zoom) {
+            $timeout(function () {
+                $scope.zoomToFeatures();
+            }, 1000);
+        }
+    };
+
+    $scope.addFeature = function (text, zoom) {
+        var feature = $scope.validate(text);
+        $scope.features.original.push({
+            id: $scope.form.counter++,
+            visible: true,
+            text: text,
+            name: feature.type || 'Feature'
+        });
+        $scope.refreshMap(zoom);
+    };
+
+    $scope.editFeature = function (feature) {
+        $scope.form.curId = feature.id;
+        $scope.form.text = feature.text;
+    };
+
+    $scope.updateFeature = function (text, zoom, id) {
+        var feature = $scope.validate(text);
+
+        var changes = {
+            text: text,
+            name: feature.type || 'Feature'
+        };
+
+        // replace feature
+        var old = $scope.features.original.filter(function (f) {
+            return f.id === id;
+        })[0];
+
+        var edited = angular.extend(old, changes);
+
+        $scope.form.curId = null;
+        $scope.refreshMap(zoom);
+    };
+
+    $scope.deleteFeature = function (feature) {
+        var i = $scope.features.original.indexOf(feature);
+        $scope.features.original.splice(i, 1);
+        $scope.updateLayers();
+    };
+
+    $scope.zoomToFeatures = function () {
+        leafletData.getMap().then(function (map) {
+            map.fitBounds($scope.featureGroup.getBounds());
+        });
+    };
+
+    // initial data
+    $scope.form.text = '{ "type": "Polygon", "coordinates": [[[30, 10], [40, 40], [20, 40], [10, 20], [30, 10]]]}';
+    //$scope.form.text = 'POINT(30 10)';
+    $scope.addFeature($scope.form.text, false);
+
+});
+
+
+  //]]></script>
+
+  <script>
+    // tell the embed parent frame the height of the content
+    if (window.parent && window.parent.parent){
+      window.parent.parent.postMessage(["resultsFrame", {
+        height: document.body.getBoundingClientRect().height,
+        slug: ""
+      }], "*")
+    }
+
+    // always overwrite window.name, in case users try to set it manually
+    window.name = "result"
+  </script>
+
+    <script>
+      let allLines = []
+
+      window.addEventListener("message", (message) => {
+        if (message.data.console){
+          let insert = document.querySelector("#insert")
+          allLines.push(message.data.console.payload)
+          insert.innerHTML = allLines.join(";\r")
+
+          let result = eval.call(null, message.data.console.payload)
+          if (result !== undefined){
+            console.log(result)
+          }
+        }
+      })
+    </script>
+
+
+
+</body></html>
