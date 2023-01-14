@@ -11,14 +11,18 @@ display: -webkit-box;
 display: -ms-flexbox;
 display: flex;
 }
+#headerDiv{
+    max-height: 20%;
+}
 #controls{
     width: 25%;
+    max-height: 100%;
     background-color: #1e1f26;
 }
 .form-container{
     position: relative;
     color: #d0e1f9;
-    height: 40%;
+    max-height: 30%;
     overflow-y: auto;
     -webkit-box-flex: 1;
     -ms-flex: 1;
@@ -45,10 +49,15 @@ button{
 }
 #savedShapes{
     width: 100%;
-    height: auto;
+    height:40%;
+    max-height:40%;
+    margin-bottom: auto;
+    margin-top: auto;
 }
 #savedShapesChildren{
     width:85%;
-    height:75%;
-    max-height:75%;
+    max-height:100%;
+}
+.shapeItem:hover{
+    cursor: pointer;
 }
