@@ -52,7 +52,12 @@
                 "
                 id="txtInputGeometry"
                 rows="3"
-                placeholder="Enter your WKT Polygon or Point here"
+                placeholder="Enter your WKT or GeoJson Geometry here
+                
+Examples:
+wkt: POLYGON(....., ..... , ....) or 
+geojson: { 'type':'feature', 'geometry': ..... }
+" 
                 ></textarea>
                     <button style="margin-bottom: 4px;" class="bg-transparent hover:bg-blue-600 text-white font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" id="btnImport">Import</button>
                     <button style="margin-bottom: 4px;" class="bg-transparent hover:bg-red-700 text-white font-semibold hover:text-white py-2 px-4 border border-red-700 hover:border-transparent rounded"  id="btnClear">Clear</button>
